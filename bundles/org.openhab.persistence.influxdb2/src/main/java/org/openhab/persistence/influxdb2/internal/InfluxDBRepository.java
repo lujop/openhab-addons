@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -24,14 +24,18 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.influxdb.client.*;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.InfluxDBClientOptions;
+import com.influxdb.client.QueryApi;
+import com.influxdb.client.WriteApi;
 import com.influxdb.client.domain.Ready;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxTable;
 
 /**
  * Manages InfluxDB server interaction maintaining client connection
- * 
+ *
  * @author Joan Pujol Espinar - Initial contribution
  */
 @NonNullByDefault
@@ -51,7 +55,7 @@ public class InfluxDBRepository {
 
     /**
      * Returns if the client has been successfully connected to server
-     * 
+     *
      * @return True if it's connected, otherwise false
      */
     public boolean isConnected() {
@@ -60,7 +64,7 @@ public class InfluxDBRepository {
 
     /**
      * Connect to InfluxDB server
-     * 
+     *
      * @return True if successful, otherwise false
      */
     public boolean connect() {
@@ -81,14 +85,15 @@ public class InfluxDBRepository {
      */
     public void disconnect() {
         final InfluxDBClient currentClient = this.client;
-        if (currentClient != null)
+        if (currentClient != null) {
             currentClient.close();
+        }
         this.client = null;
     }
 
     /**
      * Check if connection is currently ready
-     * 
+     *
      * @return True if its ready, otherwise false
      */
     public boolean checkConnectionStatus() {
@@ -110,28 +115,29 @@ public class InfluxDBRepository {
 
     /**
      * Write point to database
-     * 
+     *
      * @param point
      */
     public void write(Point point) {
         final WriteApi currentWriteAPI = writeAPI;
-        if (currentWriteAPI != null)
+        if (currentWriteAPI != null) {
             currentWriteAPI.writePoint(point);
-        else
+        } else {
             logger.error("Write point {} ignored due to writeAPI isn't present", point);
+        }
     }
 
     /**
      * Executes Flux query
-     * 
+     *
      * @param query Query
      * @return Query results
      */
     public List<FluxTable> query(String query) {
         final QueryApi currentQueryAPI = queryAPI;
-        if (currentQueryAPI != null)
+        if (currentQueryAPI != null) {
             return currentQueryAPI.query(query);
-        else {
+        } else {
             logger.error("Returning empty list because queryAPI isn't present");
             return Collections.emptyList();
         }
@@ -139,7 +145,7 @@ public class InfluxDBRepository {
 
     /**
      * Return all stored item names with it's count of stored points
-     * 
+     *
      * @return Map with <ItemName,ItemCount> entries
      */
     public Map<String, Integer> getStoredItemsCount() {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -35,15 +35,18 @@ public class FilterCriteriaQueryCreator {
 
         if (criteria.getBeginDateZoned() != null || criteria.getEndDateZoned() != null) {
             RangeFlux range = flux.range();
-            if (criteria.getBeginDateZoned() != null)
+            if (criteria.getBeginDateZoned() != null) {
                 range = range.withStart(criteria.getBeginDateZoned().toInstant());
-            if (criteria.getEndDateZoned() != null)
+            }
+            if (criteria.getEndDateZoned() != null) {
                 range = range.withStop(criteria.getEndDateZoned().toInstant());
+            }
             flux = range;
         }
 
-        if (criteria.getItemName() != null)
+        if (criteria.getItemName() != null) {
             flux = flux.filter().withPropertyValue(TAG_ITEM_NAME, criteria.getItemName());
+        }
 
         if (criteria.getState() != null && criteria.getOperator() != null) {
             Restrictions restrictions = Restrictions.and(Restrictions.field().equal(COLUMN_VALUE_NAME),

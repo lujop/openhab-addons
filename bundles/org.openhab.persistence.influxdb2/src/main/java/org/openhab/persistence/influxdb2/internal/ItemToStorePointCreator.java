@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -91,10 +91,11 @@ public class ItemToStorePointCreator {
         final Class<? extends State> desiredConversion = calculateDesiredTypeConversionToStore(item);
         if (desiredConversion != null) {
             State convertedState = item.getStateAs(desiredConversion);
-            if (convertedState != null)
+            if (convertedState != null) {
                 state = convertedState;
-            else
+            } else {
                 state = item.getState();
+            }
         } else {
             state = item.getState();
         }
@@ -112,16 +113,17 @@ public class ItemToStorePointCreator {
     }
 
     private void setPointValue(@Nullable Object value, Point point) {
-        if (value instanceof String)
+        if (value instanceof String) {
             point.addField(COLUMN_VALUE_NAME, (String) value);
-        else if (value instanceof Number)
+        } else if (value instanceof Number) {
             point.addField(COLUMN_VALUE_NAME, (Number) value);
-        else if (value instanceof Boolean)
+        } else if (value instanceof Boolean) {
             point.addField(COLUMN_VALUE_NAME, (Boolean) value);
-        else if (value == null)
+        } else if (value == null) {
             point.addField(COLUMN_VALUE_NAME, (String) null);
-        else
+        } else {
             throw new RuntimeException("Not expected value type");
+        }
     }
 
     private void addPointTags(Item item, Point point) {

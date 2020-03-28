@@ -1,3 +1,15 @@
+/**
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
+ *
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ */
 package org.openhab.persistence.influxdb2.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,9 +29,13 @@ import org.mockito.MockitoAnnotations;
 import org.openhab.core.items.Metadata;
 import org.openhab.core.items.MetadataKey;
 import org.openhab.core.items.MetadataRegistry;
+import org.openhab.core.library.items.NumberItem;
 
 import com.influxdb.client.write.Point;
 
+/**
+ * @author Joan Pujol Espinar - Initial contribution
+ */
 @SuppressWarnings("null") // In case of any NPE it will cause test fail that it's the expected result
 public class ItemToStorePointCreatorTest {
     @Mock
@@ -48,9 +64,9 @@ public class ItemToStorePointCreatorTest {
 
     @Test
     public void convertBasicItem() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
         Point point = instance.convert(item, null);
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
 
         assertThat(itemName(line), equalTo(item.getName()));
         assertThat("Must Store item name", tags(line), hasEntry("item", item.getName()));
@@ -59,21 +75,21 @@ public class ItemToStorePointCreatorTest {
 
     @Test
     public void shouldUseAliasAsMeasurementNameIfProvided() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
         Point point = instance.convert(item, "aliasName");
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
 
         assertThat(itemName(line), is("aliasName"));
     }
 
     @Test
     public void shouldStoreCategoryTagIfProvidedAndConfigured() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
         item.setCategory("categoryValue");
 
         when(influxDBConfiguration.isAddCategoryTag()).thenReturn(true);
         Point point = instance.convert(item, null);
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
         assertThat(tags(line), hasEntry(InfluxDBConstants.TAG_CATEGORY_NAME, "categoryValue"));
 
         when(influxDBConfiguration.isAddCategoryTag()).thenReturn(false);
@@ -84,11 +100,11 @@ public class ItemToStorePointCreatorTest {
 
     @Test
     public void shouldStoreTypeTagIfProvidedAndConfigured() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
 
         when(influxDBConfiguration.isAddTypeTag()).thenReturn(true);
         Point point = instance.convert(item, null);
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
         assertThat(tags(line), hasEntry(InfluxDBConstants.TAG_TYPE_NAME, "Number"));
 
         when(influxDBConfiguration.isAddTypeTag()).thenReturn(false);
@@ -99,12 +115,12 @@ public class ItemToStorePointCreatorTest {
 
     @Test
     public void shouldStoreTypeLabelIfProvidedAndConfigured() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
         item.setLabel("ItemLabel");
 
         when(influxDBConfiguration.isAddLabelTag()).thenReturn(true);
         Point point = instance.convert(item, null);
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
         assertThat(tags(line), hasEntry(InfluxDBConstants.TAG_LABEL_NAME, "ItemLabel"));
 
         when(influxDBConfiguration.isAddLabelTag()).thenReturn(false);
@@ -115,14 +131,14 @@ public class ItemToStorePointCreatorTest {
 
     @Test
     public void shouldStoreMetadataAsTagsIfProvided() {
-        var item = ItemTestHelper.createNumberItem("myitem", 5);
+        NumberItem item = ItemTestHelper.createNumberItem("myitem", 5);
         MetadataKey metadataKey = new MetadataKey(InfluxDB2PersistenceService.SERVICE_NAME, item.getName());
 
         when(metadataRegistry.get(metadataKey))
                 .thenReturn(new Metadata(metadataKey, "", Map.of("key1", "val1", "key2", "val2")));
 
         Point point = instance.convert(item, null);
-        var line = point.toLineProtocol();
+        String line = point.toLineProtocol();
         assertThat(tags(line), hasEntry("key1", "val1"));
         assertThat(tags(line), hasEntry("key2", "val2"));
     }
@@ -130,19 +146,21 @@ public class ItemToStorePointCreatorTest {
 }
 
 /**
- * Simple InfluxDB line protocol parser (not complete, only for test purpouses)
+ * Simple InfluxDB line protocol parser (not complete, only for test purposes)
  * https://v2.docs.influxdata.com/v2.0/reference/syntax/line-protocol/
+ *
+ * @author Joan Pujol Espinar - Initial contribution
  */
 class LineProtocolExtractUtils {
 
     public static String itemName(String line) {
-        var nameTagsPart = line.split(" ", -1)[0];
+        String nameTagsPart = line.split(" ", -1)[0];
         return nameTagsPart.split(",", -1)[0];
     }
 
     public static Map<String, String> tags(String line) {
-        var nameTagsPart = line.split(" ", -1)[0];
-        var idxFirstComma = nameTagsPart.indexOf(",");
+        String nameTagsPart = line.split(" ", -1)[0];
+        int idxFirstComma = nameTagsPart.indexOf(",");
         if (idxFirstComma > -1) {
             return parseFieldValueList(nameTagsPart.substring(idxFirstComma + 1));
         } else {
@@ -151,18 +169,18 @@ class LineProtocolExtractUtils {
     }
 
     private static Map<String, String> parseFieldValueList(String fieldValueList) {
-        var fields = fieldValueList.split(",", -1);
-        var result = new HashMap<String, String>();
+        String[] fields = fieldValueList.split(",", -1);
+        Map<String, String> result = new HashMap<String, String>();
 
         for (String field : fields) {
-            var fieldParts = field.split("=");
+            String[] fieldParts = field.split("=");
             result.put(fieldParts[0], fieldParts[1].replaceAll("\"", ""));
         }
         return result;
     }
 
     public static Map<String, String> fields(String line) {
-        var fieldsPart = line.split(" ", -1)[1];
+        String fieldsPart = line.split(" ", -1)[1];
         return parseFieldValueList(fieldsPart);
     }
 
