@@ -70,6 +70,14 @@
       <type>xml</type>
       <scope>provided</scope>
     </dependency>
+
+    <!-- EEA-->
+      <dependency>
+        <groupId>org.lastnpe.eea</groupId>
+        <artifactId>jdk-eea</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+
   </dependencies>
 
   <properties>

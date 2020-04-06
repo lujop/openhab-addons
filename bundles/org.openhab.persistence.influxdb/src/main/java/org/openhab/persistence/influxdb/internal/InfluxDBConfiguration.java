@@ -55,7 +55,6 @@ public class InfluxDBConfiguration {
     private final boolean addTypeTag;
     private final boolean addLabelTag;
 
-    @SuppressWarnings("null")
     public InfluxDBConfiguration(Map<String, @Nullable Object> config) {
         url = (String) config.getOrDefault(URL_PARAM, "http://127.0.0.1:8086");
         user = (String) config.getOrDefault(USER_PARAM, "openhab");
