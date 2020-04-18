@@ -73,9 +73,9 @@
 
     <!-- EEA-->
       <dependency>
-        <groupId>org.lastnpe.eea</groupId>
-        <artifactId>jdk-eea</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>org.openhab</groupId>
+        <artifactId>openhab-eea</artifactId>
+        <version>1.0-SNAPSHOT</version>
       </dependency>
 
   </dependencies>

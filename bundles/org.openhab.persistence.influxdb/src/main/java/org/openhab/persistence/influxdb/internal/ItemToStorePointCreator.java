@@ -77,10 +77,6 @@ public class ItemToStorePointCreator {
 
         @NonNull
         String test = StringUtils.lowerCase(null);
-        System.out.println(test.toString());
-
-        System.out.println("test");
-        name = StringUtils.defaultString(name);
 
         return name;
     }
