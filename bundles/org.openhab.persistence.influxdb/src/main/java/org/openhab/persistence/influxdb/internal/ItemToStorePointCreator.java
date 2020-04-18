@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2020 Contributors to the openHAB project
+* Copyright (c) 2010-2020 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -12,15 +12,13 @@
  */
 package org.openhab.persistence.influxdb.internal;
 
-import static org.openhab.persistence.influxdb.internal.InfluxDBConstants.TAG_CATEGORY_NAME;
-import static org.openhab.persistence.influxdb.internal.InfluxDBConstants.TAG_ITEM_NAME;
-import static org.openhab.persistence.influxdb.internal.InfluxDBConstants.TAG_LABEL_NAME;
-import static org.openhab.persistence.influxdb.internal.InfluxDBConstants.TAG_TYPE_NAME;
+import static org.openhab.persistence.influxdb.internal.InfluxDBConstants.*;
 
 import java.time.Instant;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.items.Item;
@@ -65,9 +63,8 @@ public class ItemToStorePointCreator {
         return point.build();
     }
 
-    @SuppressWarnings("null")
     private String calculateMeasurementName(Item item, @Nullable String storeAlias) {
-        String name;
+        String name = null;
         if (StringUtils.isNotBlank(storeAlias)) {
             name = storeAlias;
         } else {
@@ -77,6 +74,13 @@ public class ItemToStorePointCreator {
         if (configuration.isReplaceUnderscore()) {
             name = name.replace('_', '.');
         }
+
+        @NonNull
+        String test = StringUtils.lowerCase(null);
+        System.out.println(test.toString());
+
+        System.out.println("test");
+        name = StringUtils.defaultString(name);
 
         return name;
     }
@@ -105,8 +109,9 @@ public class ItemToStorePointCreator {
     private void addPointTags(Item item, InfluxPoint.Builder point) {
         if (configuration.isAddCategoryTag()) {
             String categoryName = item.getCategory();
-            if (categoryName == null)
+            if (categoryName == null) {
                 categoryName = "n/a";
+            }
             point.withTag(TAG_CATEGORY_NAME, categoryName);
         }
 
@@ -116,8 +121,9 @@ public class ItemToStorePointCreator {
 
         if (configuration.isAddLabelTag()) {
             String labelName = item.getLabel();
-            if (labelName == null)
+            if (labelName == null) {
                 labelName = "n/a";
+            }
             point.withTag(TAG_LABEL_NAME, labelName);
         }
 

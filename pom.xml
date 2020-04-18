@@ -81,6 +81,8 @@
     <feature.directory>src/main/feature/feature.xml</feature.directory>
     <spotless.version>1.24.3</spotless.version>
     <spotless.check.skip>true</spotless.check.skip> <!-- Spotless disabled for now -->
+    <m2e.eea.annotationpath.jre>${MAVEN_REPO}/org/openhab/openhab-eea/1.0-SNAPSHOT/openhab-eea-1.0-SNAPSHOT.jar</m2e.eea.annotationpath.jre>
+    <m2e.eea.annotationpath.maven>${MAVEN_REPO}/org/openhab/openhab-eea/1.0-SNAPSHOT/openhab-eea-1.0-SNAPSHOT.jar</m2e.eea.annotationpath.maven>    
   </properties>
 
   <dependencyManagement>
